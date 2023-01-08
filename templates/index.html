@@ -26,12 +26,10 @@
                         {% if game.home_confidence %}<b>{{ game.home_team }} ({{game.home_confidence}}%)</b>{% else %}{{ game.home_team }}{% endif %}
                       </td>
                     <td style="text-align: right">
-                      <span class="{% if game.away_team_ev|float > 0 %}green{% else %}red{% endif %}">
-                        {{ game.away_team_ev }}</span><br>
-                      <span class="{% if game.home_team_ev|float > 0 %}green{% else %}red{% endif %}">
-                        {{ game.home_team_ev }}</span>
+                      <span class="ev-value">{{ game.away_team_ev }}</span><br>
+                      <span class="ev-value">{{ game.home_team_ev }}</span>
                     </td>
-                    <td>{{ game.ou_pick }} {{ game.ou_value }} ({{game.ou_confidence}}%)</td>
+                    <td>{{ game.ou_pick }} {{ game.ou_value }} (<span class="ou-confidence">{{game.ou_confidence}}%</span>)</td>
                 </tr>
                 {% endfor %}
             </table>
@@ -39,6 +37,34 @@
         {% endfor %}
     </div>
     </main>
+    <script>
+      function perc2color(perc,min,max) {
+            var base = (max - min);
+            if (base == 0) { perc = 100; }
+            else {
+                perc = (perc - min) / base * 100; 
+            }
+            var r, g, b = 0;
+            if (perc < 50) {
+                r = 255;
+                g = Math.round(5.1 * perc);
+            }
+            else {
+                g = 255;
+                r = Math.round(510 - 5.10 * perc);
+            }
+            var h = r * 0x10000 + g * 0x100 + b * 0x1;
+            return '#' + ('000000' + h.toString(16)).slice(-6);
+        }
+      evs = document.getElementsByClassName("ev-value")
+      ous = document.getElementsByClassName("ou-confidence")
+      for (var i = 0; i < evs.length; i++) {
+          evs[i].style.color = perc2color(parseFloat(evs[i].textContent)+100,0,200)
+      }
+      for (var i = 0; i < ous.length; i++) {
+          ous[i].style.color = perc2color(parseFloat(ous[i].textContent),0,100)
+      }
+      </script>
   </body>
 </html>
 
